@@ -12,11 +12,12 @@ const factionNamesMap = {
 };
 
 const STORAGE_KEY = 'arknights_owned_v1';
+// 保存されたIDを読み込み。なければ空配列。
 let ownedIds = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
 let currentManageRarity = "6";
 let currentManageClass = "all";
 
-// --- メインタブ切り替え ---
+// --- タブ切り替え ---
 document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
         document.querySelectorAll('.tab-btn, .page').forEach(el => el.classList.remove('active'));
@@ -27,7 +28,7 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     });
 });
 
-// --- 管理用サブタブ切り替え (レアリティ & クラス) ---
+// --- 管理用サブタブ（レアリティ & クラス） ---
 document.querySelectorAll('.sub-tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
         document.querySelectorAll('.sub-tab-btn').forEach(el => el.classList.remove('active'));
@@ -53,10 +54,11 @@ document.getElementById('all-unowned-btn').onclick = () => bulkUpdate(false);
 function bulkUpdate(isOwned) {
     const currentPool = getFilteredManagePool();
     currentPool.forEach(op => {
+        const opId = String(op.id);
         if (isOwned) {
-            if (!ownedIds.includes(op.id)) ownedIds.push(op.id);
+            if (!ownedIds.includes(opId)) ownedIds.push(opId);
         } else {
-            ownedIds = ownedIds.filter(id => id !== op.id);
+            ownedIds = ownedIds.filter(id => id !== opId);
         }
     });
     localStorage.setItem(STORAGE_KEY, JSON.stringify(ownedIds));
@@ -101,13 +103,15 @@ function renderManageList() {
 
     filtered.forEach(op => {
         const card = createCard(op);
-        if (ownedIds.includes(op.id)) card.classList.add('owned');
+        const opId = String(op.id);
+        if (ownedIds.includes(opId)) card.classList.add('owned');
+        
         card.onclick = () => {
-            if (ownedIds.includes(op.id)) {
-                ownedIds = ownedIds.filter(id => id !== op.id);
+            if (ownedIds.includes(opId)) {
+                ownedIds = ownedIds.filter(id => id !== opId);
                 card.classList.remove('owned');
             } else {
-                ownedIds.push(op.id);
+                ownedIds.push(opId);
                 card.classList.add('owned');
             }
             localStorage.setItem(STORAGE_KEY, JSON.stringify(ownedIds));
@@ -116,7 +120,7 @@ function renderManageList() {
     });
 }
 
-// --- 編成生成 ---
+// --- 編成生成 (修正メイン) ---
 function generate() {
     const display = document.getElementById('squad-display');
     display.innerHTML = '';
@@ -125,21 +129,31 @@ function generate() {
     const ownedOnly = document.getElementById('owned-only-check').checked;
     const allowedRarities = Array.from(document.querySelectorAll('.rarity-check:checked')).map(cb => cb.value);
 
+    // フィルタリング
     let pool = allOperators.filter(op => {
-        const r = op.rarity.replace(/[^0-9]/g, '').charAt(0);
-        const rMatch = allowedRarities.includes(r);
-        const oMatch = ownedOnly ? ownedIds.includes(op.id) : true;
+        const opId = String(op.id);
         
+        // 1. 所持チェック (ここが最重要)
+        // 「所持のみ抽出」にチェックがある場合、ownedIdsに含まれていないなら除外
+        if (ownedOnly && !ownedIds.includes(opId)) {
+            return false;
+        }
+
+        // 2. レアリティ判定
+        const r = op.rarity.replace(/[^0-9]/g, '').charAt(0);
+        if (!allowedRarities.includes(r)) return false;
+
+        // 3. 陣営判定
         const fraw = op.faction || "";
         const fkey = fraw.replace('n_', '').toLowerCase();
         const fName = factionNamesMap[fkey] || fraw;
-        const fMatch = targetFaction === "all" || fName === targetFaction;
+        if (targetFaction !== "all" && fName !== targetFaction) return false;
 
-        return rMatch && oMatch && fMatch;
+        return true;
     });
 
     if (pool.length === 0) {
-        display.innerHTML = '<p style="grid-column:1/-1;">該当キャラがいません</p>';
+        display.innerHTML = '<p style="grid-column:1/-1;">該当キャラがいません。所持管理やフィルタを確認してください。</p>';
         return;
     }
 
@@ -147,6 +161,7 @@ function generate() {
     let tempUsedIds = new Set();
     const classInputs = document.querySelectorAll('.class-input');
 
+    // 指定枚数分を先に抽選
     classInputs.forEach(input => {
         const tClass = input.getAttribute('data-class');
         const tCount = parseInt(input.value) || 0;
@@ -160,6 +175,7 @@ function generate() {
         });
     });
 
+    // 残り枠を埋める
     const remaining = 12 - finalSquad.length;
     if (remaining > 0) {
         const others = pool.filter(op => !tempUsedIds.has(op.id)).sort(() => 0.5 - Math.random()).slice(0, remaining);
