@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>アークナイツ 究極編成生成器</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>アークナイツ ランダム編成</h1>
+        
+        <div class="controls">
+            <div class="filter-group">
+                <label>陣営制限:</label>
+                <select id="faction-filter">
+                    <option value="all">すべての陣営</option>
+                    <option value="ロドス">ロドス</option>
+                    <option value="カジミエーシュ">カジミエーシュ</option>
+                    <option value="炎国">炎国 (yan)</option>
+                    <option value="ウルサス">ウルサス</option>
+                    <option value="ヴィクトリア">ヴィクトリア</option>
+                    <option value="シラクーザ">シラクーザ</option>
+                    <option value="ラテラーノ">ラテラーノ</option>
+                    <option value="ライン生命">ライン生命</option>
+                    <option value="イベリア">イベリア</option>
+                    <option value="アビサル">アビサル</option>
+                    <option value="サルゴン">サルゴン</option>
+                    <option value="クルビア">クルビア</option>
+                </select>
+            </div>
+
+            <div class="class-settings">
+                <p class="setting-title">各クラスの枚数を指定（合計12人まで）</p>
+                <div class="class-row">
+                    <div class="input-item">先鋒<input type="number" class="class-input" data-class="先鋒" value="2" min="0" max="12"></div>
+                    <div class="input-item">前衛<input type="number" class="class-input" data-class="前衛" value="2" min="0" max="12"></div>
+                    <div class="input-item">狙撃<input type="number" class="class-input" data-class="狙撃" value="0" min="0" max="12"></div>
+                    <div class="input-item">重装<input type="number" class="class-input" data-class="重装" value="0" min="0" max="12"></div>
+                </div>
+                <div class="class-row">
+                    <div class="input-item">医療<input type="number" class="class-input" data-class="医療" value="0" min="0" max="12"></div>
+                    <div class="input-item">補助<input type="number" class="class-input" data-class="補助" value="0" min="0" max="12"></div>
+                    <div class="input-item">術師<input type="number" class="class-input" data-class="術師" value="0" min="0" max="12"></div>
+                    <div class="input-item">特殊<input type="number" class="class-input" data-class="特殊" value="0" min="0" max="12"></div>
+                </div>
+                <p class="status-text">現在指定: <span id="total-count">4</span> / 12 人 <small>(残りはランダム)</small></p>
+            </div>
+            
+            <button id="generate-btn">編成を生成する</button>
+        </div>
+
+        <div id="squad-display" class="squad-grid"></div>
+    </div>
+    <script type="module" src="script.js"></script>
+</body>
+</html>
