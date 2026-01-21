@@ -8,9 +8,9 @@
 </head>
 <body>
     <div class="container">
-        <nav class="tabs">
-            <button class="tab-btn active" data-target="main-page">編成生成</button>
-            <button class="tab-btn" data-target="manage-page">所持キャラ管理</button>
+        <nav class="main-nav">
+            <button class="nav-btn active" data-target="main-page">編成生成</button>
+            <button class="nav-btn" data-target="manage-page">所持キャラ管理</button>
         </nav>
 
         <div id="main-page" class="page active">
@@ -45,29 +45,27 @@
 
                 <div class="deployment-settings">
                     <div class="total-config">
-                        <label>合計編成人数</label>
+                        <label>合計人数</label>
                         <input type="number" id="max-squad-size" value="12" min="1" max="12" class="huge-input">
-                        <p class="hint">最大12人</p>
                     </div>
                     <div class="class-config">
-                        <label>クラス別・確定枠（4x2段）</label>
+                        <label class="section-label">職種別・確定枠指定</label>
                         <div class="class-input-grid">
-                            <div class="input-item">先鋒<input type="number" class="class-input" data-class="先鋒" value="0"></div>
-                            <div class="input-item">前衛<input type="number" class="class-input" data-class="前衛" value="0"></div>
-                            <div class="input-item">狙撃<input type="number" class="class-input" data-class="狙撃" value="0"></div>
-                            <div class="input-item">重装<input type="number" class="class-input" data-class="重装" value="0"></div>
-                            <div class="input-item">医療<input type="number" class="class-input" data-class="医療" value="0"></div>
-                            <div class="input-item">補助<input type="number" class="class-input" data-class="補助" value="0"></div>
-                            <div class="input-item">術師<input type="number" class="class-input" data-class="術師" value="0"></div>
-                            <div class="input-item">特殊<input type="number" class="class-input" data-class="特殊" value="0"></div>
+                            <div class="input-item"><span>先鋒</span><input type="number" class="class-input" data-class="先鋒" value="0"></div>
+                            <div class="input-item"><span>前衛</span><input type="number" class="class-input" data-class="前衛" value="0"></div>
+                            <div class="input-item"><span>狙撃</span><input type="number" class="class-input" data-class="狙撃" value="0"></div>
+                            <div class="input-item"><span>重装</span><input type="number" class="class-input" data-class="重装" value="0"></div>
+                            <div class="input-item"><span>医療</span><input type="number" class="class-input" data-class="医療" value="0"></div>
+                            <div class="input-item"><span>補助</span><input type="number" class="class-input" data-class="補助" value="0"></div>
+                            <div class="input-item"><span>術師</span><input type="number" class="class-input" data-class="術師" value="0"></div>
+                            <div class="input-item"><span>特殊</span><input type="number" class="class-input" data-class="特殊" value="0"></div>
                         </div>
                     </div>
-                    <div class="status-options">
-                        <label class="toggle-label"><input type="checkbox" id="owned-only-check"> 所持済みのみ抽出</label>
-                        <span class="count-display">確定合計: <span id="total-count">0</span> 人</span>
-                    </div>
                 </div>
-                <button id="generate-btn" class="main-generate-btn">作戦開始</button>
+                <div class="status-options">
+                    <label class="toggle-label"><input type="checkbox" id="owned-only-check" checked> 所持済みのみ抽出</label>
+                    <button id="generate-btn" class="main-generate-btn">作戦開始</button>
+                </div>
             </div>
             <div id="squad-display" class="squad-grid results-layout"></div>
         </div>
@@ -75,13 +73,13 @@
         <div id="manage-page" class="page">
             <h1>所持キャラ管理</h1>
             <div class="manage-controls">
-                <div class="sub-tabs">
+                <div class="sub-tabs rarity-tabs">
                     <button class="sub-tab-btn active" data-rarity="6">★6</button>
                     <button class="sub-tab-btn" data-rarity="5">★5</button>
                     <button class="sub-tab-btn" data-rarity="4">★4</button>
                     <button class="sub-tab-btn" data-rarity="3">★3-1</button>
                 </div>
-                <div class="class-filter-tabs">
+                <div class="sub-tabs class-tabs">
                     <button class="class-tab active" data-class="all">全職</button>
                     <button class="class-tab" data-class="先鋒">先鋒</button>
                     <button class="class-tab" data-class="前衛">前衛</button>
@@ -93,8 +91,8 @@
                     <button class="class-tab" data-class="特殊">特殊</button>
                 </div>
                 <div class="bulk-actions">
-                    <button id="all-owned-btn" class="action-btn">全選択</button>
-                    <button id="all-unowned-btn" class="action-btn secondary">全解除</button>
+                    <button id="all-owned-btn" class="action-btn">一括選択</button>
+                    <button id="all-unowned-btn" class="action-btn secondary">一括解除</button>
                 </div>
             </div>
             <div id="operator-list" class="squad-grid manage-grid"></div>
