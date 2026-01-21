@@ -17,40 +17,26 @@
         <div id="main-page" class="page active">
             <h1>PRTS: 拠点防衛編成</h1>
             <div class="controls">
-                <div class="filter-group-main">
-                    <div class="filter-item">
-                        <label>所属陣営</label>
-                        <select id="faction-filter" class="large-select">
-                            <option value="all">すべての陣営</option>
-                            <option value="ロドス">ロドス</option>
-                            <option value="カジミエーシュ">カジミエーシュ</option>
-                            <option value="炎国">炎国</option>
-                            <option value="ウルサス">ウルサス</option>
-                            <option value="ヴィクトリア">ヴィクトリア</option>
-                            <option value="シラクーザ">シラクーザ</option>
-                            <option value="ラテラーノ">ラテラーノ</option>
-                            <option value="ライン生命">ライン生命</option>
-                            <option value="アビサル">アビサル</option>
-                        </select>
-                    </div>
-                    <div class="filter-item">
-                        <label>レアリティ制限</label>
-                        <div class="rarity-checks large-checks">
-                            <label><input type="checkbox" class="rarity-check" value="6" checked><span>★6</span></label>
-                            <label><input type="checkbox" class="rarity-check" value="5" checked><span>★5</span></label>
-                            <label><input type="checkbox" class="rarity-check" value="4" checked><span>★4</span></label>
-                            <label><input type="checkbox" class="rarity-check" value="3" checked><span>★3-1</span></label>
+                <div class="deployment-settings">
+                    <div class="config-left">
+                        <div class="total-config">
+                            <label class="section-label">合計人数</label>
+                            <input type="number" id="max-squad-size" value="12" min="1" max="12" class="huge-input">
+                        </div>
+                        <div class="options-config">
+                            <label class="section-label">オプション</label>
+                            <div class="rarity-checks">
+                                <label><input type="checkbox" class="rarity-check" value="6" checked><span>★6</span></label>
+                                <label><input type="checkbox" class="rarity-check" value="5" checked><span>★5</span></label>
+                                <label><input type="checkbox" class="rarity-check" value="4" checked><span>★4</span></label>
+                                <label><input type="checkbox" class="rarity-check" value="3" checked><span>★3-1</span></label>
+                            </div>
+                            <label class="toggle-label"><input type="checkbox" id="owned-only-check" checked> 所持済み限定</label>
                         </div>
                     </div>
-                </div>
 
-                <div class="deployment-settings">
-                    <div class="total-config">
-                        <label>合計人数</label>
-                        <input type="number" id="max-squad-size" value="12" min="1" max="12" class="huge-input">
-                    </div>
                     <div class="class-config">
-                        <label class="section-label">職種別・確定枠（横2列）</label>
+                        <label class="section-label">職種別・確定枠指定</label>
                         <div class="class-input-grid">
                             <div class="input-item"><span>先鋒</span><input type="number" class="class-input" data-class="先鋒" value="0"></div>
                             <div class="input-item"><span>前衛</span><input type="number" class="class-input" data-class="前衛" value="0"></div>
@@ -65,15 +51,17 @@
                 </div>
 
                 <div class="status-options">
-                    <label class="toggle-label"><input type="checkbox" id="owned-only-check" checked> 所持済み限定</label>
-                    <div class="btn-group-main">
-                        <button id="generate-btn" class="main-generate-btn">作戦開始</button>
-                        <button id="share-btn" class="share-btn">画像保存＆X共有</button>
-                    </div>
+                    <button id="generate-btn" class="main-generate-btn">作戦開始</button>
                 </div>
             </div>
-            
+
             <div id="squad-display" class="results-layout"></div>
+
+            <div id="share-actions" class="share-actions" style="display: none;">
+                <button id="download-btn" class="action-btn dl">画像を保存</button>
+                <button id="share-x-btn" class="action-btn x">Xで共有</button>
+                <button id="share-bsky-btn" class="action-btn bsky">Blueskyで共有</button>
+            </div>
             <a id="download-link" style="display:none;"></a>
         </div>
 
@@ -98,12 +86,20 @@
                     <button class="class-tab" data-class="特殊">特殊</button>
                 </div>
                 <div class="bulk-actions">
-                    <button id="all-owned-btn" class="action-btn">一括選択</button>
-                    <button id="all-unowned-btn" class="action-btn secondary">一括解除</button>
+                    <button id="all-owned-btn" class="action-btn-small">一括選択</button>
+                    <button id="all-unowned-btn" class="action-btn-small secondary">一括解除</button>
                 </div>
             </div>
-            <div id="operator-list" class="squad-grid manage-grid"></div>
+            <div id="operator-list" class="manage-grid"></div>
         </div>
+
+        <footer class="footer-contact">
+            <p>お問い合わせ・ご要望はこちら</p>
+            <div class="footer-links">
+                <a href="https://x.com/noza0677" target="_blank" rel="noopener">X: @noza0677</a>
+                <a href="https://marshmallow-qa.com/272n6zjlsy9kbtk" target="_blank" rel="noopener">マシュマロ</a>
+            </div>
+        </footer>
     </div>
     <script type="module" src="script.js"></script>
 </body>
