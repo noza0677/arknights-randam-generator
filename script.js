@@ -3,68 +3,49 @@ import allOperators from './data.js';
 const factionNamesMap = {
     "rhodes": "ロドス", "victoria": "ヴィクトリア", "ursus": "ウルサス",
     "kazimierz": "カジミエーシュ", "lungmen": "龍門", "yan": "炎国",
-    "laterano": "ラテラーノ", "rhine": "ライン生命", "penguin": "ペンギン急便",
-    "blacksteel": "BSW", "kjerag": "カランド貿易", "abyssal": "アビサル",
-    "iberia": "イベリア", "sargon": "サルゴン", "rim": "リム・ビリトン",
-    "columbia": "クルビア", "siracusa": "シラクーザ", "higashi": "極東",
-    "minos": "ミノス", "bolivar": "ボリバル", "leithanien": "リターニア",
-    "sami": "サーミ", "kazdel": "カズデル"
+    "laterano": "ラテラーノ", "rhine": "ライン生命", "abyssal": "アビサル",
+    "siracusa": "シラクーザ", "iberia": "イベリア", "sargon": "サルゴン"
 };
 
 const STORAGE_KEY = 'arknights_owned_v1';
-// 保存されたIDを読み込み。なければ空配列。
 let ownedIds = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
 let currentManageRarity = "6";
 let currentManageClass = "all";
 
-// --- タブ切り替え ---
+// タブ制御
 document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.onclick = () => {
         document.querySelectorAll('.tab-btn, .page').forEach(el => el.classList.remove('active'));
         btn.classList.add('active');
-        const target = btn.dataset.target;
-        document.getElementById(target).classList.add('active');
-        if (target === 'manage-page') renderManageList();
-    });
+        document.getElementById(btn.dataset.target).classList.add('active');
+        if (btn.dataset.target === 'manage-page') renderManageList();
+    };
 });
 
-// --- 管理用サブタブ（レアリティ & クラス） ---
-document.querySelectorAll('.sub-tab-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        document.querySelectorAll('.sub-tab-btn').forEach(el => el.classList.remove('active'));
-        btn.classList.add('active');
-        currentManageRarity = btn.dataset.rarity;
-        renderManageList();
-    });
-});
+// カード生成関数
+function createCard(op) {
+    const rarityNum = parseInt(op.rarity.replace(/[^0-9]/g, '').charAt(0)) || 1;
+    const charId = String(op.id).toLowerCase().trim();
+    const fraw = op.faction || "";
+    const fName = factionNamesMap[fraw.replace('n_', '').toLowerCase()] || fraw;
 
-document.querySelectorAll('.class-tab').forEach(btn => {
-    btn.addEventListener('click', () => {
-        document.querySelectorAll('.class-tab').forEach(el => el.classList.remove('active'));
-        btn.classList.add('active');
-        currentManageClass = btn.dataset.class;
-        renderManageList();
-    });
-});
-
-// --- 一括操作 ---
-document.getElementById('all-owned-btn').onclick = () => bulkUpdate(true);
-document.getElementById('all-unowned-btn').onclick = () => bulkUpdate(false);
-
-function bulkUpdate(isOwned) {
-    const currentPool = getFilteredManagePool();
-    currentPool.forEach(op => {
-        const opId = String(op.id);
-        if (isOwned) {
-            if (!ownedIds.includes(opId)) ownedIds.push(opId);
-        } else {
-            ownedIds = ownedIds.filter(id => id !== opId);
-        }
-    });
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(ownedIds));
-    renderManageList();
+    const div = document.createElement('div');
+    div.className = `operator-card rarity-${rarityNum}`;
+    div.innerHTML = `
+        <div class="icon-container">
+            <img src="./img/${charId}.png" class="op-icon" onerror="this.src='https://via.placeholder.com/100/333/fff?text=No+Img'">
+        </div>
+        <div class="rarity-stars">${'★'.repeat(rarityNum)}</div>
+        <div class="name">${op.name}</div>
+        <div class="tag-container">
+            <span class="info-tag">${op.class}</span>
+            <span class="info-tag">${fName}</span>
+        </div>
+    `;
+    return div;
 }
 
+// 管理画面用プール取得
 function getFilteredManagePool() {
     return allOperators.filter(op => {
         const r = op.rarity.replace(/[^0-9]/g, '').charAt(0);
@@ -74,123 +55,90 @@ function getFilteredManagePool() {
     });
 }
 
-// --- カード生成 ---
-function createCard(op) {
-    const rarityNum = parseInt(op.rarity.replace(/[^0-9]/g, '').charAt(0)) || 1;
-    const charId = String(op.id).toLowerCase().trim();
-    const fraw = op.faction || "";
-    const fkey = fraw.replace('n_', '').toLowerCase();
-    const fName = factionNamesMap[fkey] || fraw;
-
-    const div = document.createElement('div');
-    div.className = `operator-card rarity-${rarityNum}`;
-    div.innerHTML = `
-        <div class="icon-container"><img src="./img/${charId}.png" class="op-icon" onerror="this.src='https://via.placeholder.com/60/444/fff?text=No'"></div>
-        <div class="info-container">
-            <div class="rarity-stars">${'★'.repeat(rarityNum)}</div>
-            <strong class="name">${op.name}</strong>
-            <div class="tags"><span class="info-tag">${op.class}</span><span class="info-tag">${fName}</span></div>
-        </div>
-    `;
-    return div;
-}
-
-// --- 管理リスト表示 ---
+// 管理リスト描画
 function renderManageList() {
     const list = document.getElementById('operator-list');
     list.innerHTML = '';
-    const filtered = getFilteredManagePool();
-
-    filtered.forEach(op => {
+    getFilteredManagePool().forEach(op => {
         const card = createCard(op);
         const opId = String(op.id);
         if (ownedIds.includes(opId)) card.classList.add('owned');
-        
         card.onclick = () => {
-            if (ownedIds.includes(opId)) {
-                ownedIds = ownedIds.filter(id => id !== opId);
-                card.classList.remove('owned');
-            } else {
-                ownedIds.push(opId);
-                card.classList.add('owned');
-            }
+            if (ownedIds.includes(opId)) { ownedIds = ownedIds.filter(id => id !== opId); }
+            else { ownedIds.push(opId); }
             localStorage.setItem(STORAGE_KEY, JSON.stringify(ownedIds));
+            renderManageList();
         };
         list.appendChild(card);
     });
 }
 
-// --- 編成生成 (修正メイン) ---
+// 編成生成
 function generate() {
     const display = document.getElementById('squad-display');
     display.innerHTML = '';
-
     const targetFaction = document.getElementById('faction-filter').value;
     const ownedOnly = document.getElementById('owned-only-check').checked;
+    const maxSquadSize = parseInt(document.getElementById('max-squad-size').value) || 12;
     const allowedRarities = Array.from(document.querySelectorAll('.rarity-check:checked')).map(cb => cb.value);
 
-    // フィルタリング
     let pool = allOperators.filter(op => {
         const opId = String(op.id);
-        
-        // 1. 所持チェック (ここが最重要)
-        // 「所持のみ抽出」にチェックがある場合、ownedIdsに含まれていないなら除外
-        if (ownedOnly && !ownedIds.includes(opId)) {
-            return false;
-        }
-
-        // 2. レアリティ判定
+        if (ownedOnly && !ownedIds.includes(opId)) return false;
         const r = op.rarity.replace(/[^0-9]/g, '').charAt(0);
         if (!allowedRarities.includes(r)) return false;
-
-        // 3. 陣営判定
         const fraw = op.faction || "";
-        const fkey = fraw.replace('n_', '').toLowerCase();
-        const fName = factionNamesMap[fkey] || fraw;
+        const fName = factionNamesMap[fraw.replace('n_', '').toLowerCase()] || fraw;
         if (targetFaction !== "all" && fName !== targetFaction) return false;
-
         return true;
     });
 
-    if (pool.length === 0) {
-        display.innerHTML = '<p style="grid-column:1/-1;">該当キャラがいません。所持管理やフィルタを確認してください。</p>';
-        return;
-    }
+    if (pool.length === 0) { display.innerHTML = '<p style="grid-column:1/-1;">該当キャラがいません</p>'; return; }
 
     let finalSquad = [];
-    let tempUsedIds = new Set();
-    const classInputs = document.querySelectorAll('.class-input');
-
-    // 指定枚数分を先に抽選
-    classInputs.forEach(input => {
+    let usedIds = new Set();
+    document.querySelectorAll('.class-input').forEach(input => {
         const tClass = input.getAttribute('data-class');
         const tCount = parseInt(input.value) || 0;
-        const classPool = pool.filter(op => op.class === tClass);
-        const selected = classPool.sort(() => 0.5 - Math.random()).slice(0, tCount);
-        selected.forEach(op => {
-            if (finalSquad.length < 12) {
-                finalSquad.push(op);
-                tempUsedIds.add(op.id);
-            }
-        });
+        const selected = pool.filter(op => op.class === tClass).sort(() => 0.5 - Math.random()).slice(0, tCount);
+        selected.forEach(op => { if (finalSquad.length < maxSquadSize) { finalSquad.push(op); usedIds.add(op.id); } });
     });
 
-    // 残り枠を埋める
-    const remaining = 12 - finalSquad.length;
-    if (remaining > 0) {
-        const others = pool.filter(op => !tempUsedIds.has(op.id)).sort(() => 0.5 - Math.random()).slice(0, remaining);
-        finalSquad = [...finalSquad, ...others];
+    if (finalSquad.length < maxSquadSize) {
+        const filler = pool.filter(op => !usedIds.has(op.id)).sort(() => 0.5 - Math.random()).slice(0, maxSquadSize - finalSquad.length);
+        finalSquad = [...finalSquad, ...filler];
     }
-
     finalSquad.forEach(op => display.appendChild(createCard(op)));
 }
 
-function updateCounter() {
-    let sum = 0;
-    document.querySelectorAll('.class-input').forEach(i => sum += (parseInt(i.value) || 0));
-    document.getElementById('total-count').textContent = sum;
-}
+// イベント設定
+document.getElementById('all-owned-btn').onclick = () => {
+    getFilteredManagePool().forEach(op => { if(!ownedIds.includes(String(op.id))) ownedIds.push(String(op.id)); });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(ownedIds));
+    renderManageList();
+};
+document.getElementById('all-unowned-btn').onclick = () => {
+    const currentPoolIds = getFilteredManagePool().map(op => String(op.id));
+    ownedIds = ownedIds.filter(id => !currentPoolIds.includes(id));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(ownedIds));
+    renderManageList();
+};
+
+document.querySelectorAll('.sub-tab-btn').forEach(btn => btn.onclick = (e) => {
+    document.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
+    e.target.classList.add('active');
+    currentManageRarity = e.target.dataset.rarity;
+    renderManageList();
+});
+document.querySelectorAll('.class-tab').forEach(btn => btn.onclick = (e) => {
+    document.querySelectorAll('.class-tab').forEach(b => b.classList.remove('active'));
+    e.target.classList.add('active');
+    currentManageClass = e.target.dataset.class;
+    renderManageList();
+});
 
 document.getElementById('generate-btn').onclick = generate;
-document.querySelectorAll('.class-input').forEach(i => i.oninput = updateCounter);
-updateCounter();
+document.querySelectorAll('.class-input').forEach(i => i.oninput = () => {
+    let sum = 0; document.querySelectorAll('.class-input').forEach(i => sum += (parseInt(i.value) || 0));
+    document.getElementById('total-count').textContent = sum;
+});

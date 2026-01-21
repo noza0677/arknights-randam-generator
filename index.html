@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PRTS: Randomizer</title>
+    <title>PRTS: Strategic Deployment</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -14,57 +14,66 @@
         </nav>
 
         <div id="main-page" class="page active">
-            <h1>PRTS: Strategic Deployment</h1>
+            <h1>PRTS: 拠点防衛編成</h1>
             <div class="controls">
-                <div class="filter-group">
-                    <label>陣営:</label>
-                    <select id="faction-filter">
-                        <option value="all">すべて</option>
-                        <option value="ロドス">ロドス</option>
-                        <option value="カジミエーシュ">カジミエーシュ</option>
-                        <option value="炎国">炎国</option>
-                        <option value="ウルサス">ウルサス</option>
-                        <option value="ヴィクトリア">ヴィクトリア</option>
-                        <option value="シラクーザ">シラクーザ</option>
-                        <option value="ラテラーノ">ラテラーノ</option>
-                        <option value="ライン生命">ライン生命</option>
-                    </select>
-
-                    <label style="margin-left:15px;">レアリティ:</label>
-                    <span class="rarity-checks">
-                        <label><input type="checkbox" class="rarity-check" value="6" checked>★6</label>
-                        <label><input type="checkbox" class="rarity-check" value="5" checked>★5</label>
-                        <label><input type="checkbox" class="rarity-check" value="4" checked>★4</label>
-                        <label><input type="checkbox" class="rarity-check" value="3" checked>★3-1</label>
-                    </span>
-                </div>
-
-                <div class="class-settings">
-                    <div class="class-row">
-                        <div class="input-item">先鋒<input type="number" class="class-input" data-class="先鋒" value="2" min="0"></div>
-                        <div class="input-item">前衛<input type="number" class="class-input" data-class="前衛" value="2" min="0"></div>
-                        <div class="input-item">狙撃<input type="number" class="class-input" data-class="狙撃" value="0" min="0"></div>
-                        <div class="input-item">重装<input type="number" class="class-input" data-class="重装" value="0" min="0"></div>
-                        <div class="input-item">医療<input type="number" class="class-input" data-class="医療" value="0" min="0"></div>
-                        <div class="input-item">補助<input type="number" class="class-input" data-class="補助" value="0" min="0"></div>
-                        <div class="input-item">術師<input type="number" class="class-input" data-class="術師" value="0" min="0"></div>
-                        <div class="input-item">特殊<input type="number" class="class-input" data-class="特殊" value="0" min="0"></div>
+                <div class="filter-group-main">
+                    <div class="filter-item">
+                        <label>所属陣営</label>
+                        <select id="faction-filter" class="large-select">
+                            <option value="all">すべての陣営</option>
+                            <option value="ロドス">ロドス</option>
+                            <option value="カジミエーシュ">カジミエーシュ</option>
+                            <option value="炎国">炎国</option>
+                            <option value="ウルサス">ウルサス</option>
+                            <option value="ヴィクトリア">ヴィクトリア</option>
+                            <option value="シラクーザ">シラクーザ</option>
+                            <option value="ラテラーノ">ラテラーノ</option>
+                            <option value="ライン生命">ライン生命</option>
+                            <option value="アビサル">アビサル</option>
+                        </select>
                     </div>
-                    <p class="status-text">
-                        <label style="color: #ffcf00; font-weight: bold; cursor: pointer;">
-                            <input type="checkbox" id="owned-only-check"> 所持キャラのみ抽出
-                        </label>
-                        　指定: <span id="total-count">4</span> / 12 人
-                    </p>
+                    <div class="filter-item">
+                        <label>レアリティ制限</label>
+                        <div class="rarity-checks large-checks">
+                            <label><input type="checkbox" class="rarity-check" value="6" checked><span>★6</span></label>
+                            <label><input type="checkbox" class="rarity-check" value="5" checked><span>★5</span></label>
+                            <label><input type="checkbox" class="rarity-check" value="4" checked><span>★4</span></label>
+                            <label><input type="checkbox" class="rarity-check" value="3" checked><span>★3-1</span></label>
+                        </div>
+                    </div>
                 </div>
-                <button id="generate-btn">編成を生成する</button>
+
+                <div class="deployment-settings">
+                    <div class="total-config">
+                        <label>合計編成人数</label>
+                        <input type="number" id="max-squad-size" value="12" min="1" max="12" class="huge-input">
+                        <p class="hint">最大12人</p>
+                    </div>
+                    <div class="class-config">
+                        <label>クラス別・確定枠（4x2段）</label>
+                        <div class="class-input-grid">
+                            <div class="input-item">先鋒<input type="number" class="class-input" data-class="先鋒" value="0"></div>
+                            <div class="input-item">前衛<input type="number" class="class-input" data-class="前衛" value="0"></div>
+                            <div class="input-item">狙撃<input type="number" class="class-input" data-class="狙撃" value="0"></div>
+                            <div class="input-item">重装<input type="number" class="class-input" data-class="重装" value="0"></div>
+                            <div class="input-item">医療<input type="number" class="class-input" data-class="医療" value="0"></div>
+                            <div class="input-item">補助<input type="number" class="class-input" data-class="補助" value="0"></div>
+                            <div class="input-item">術師<input type="number" class="class-input" data-class="術師" value="0"></div>
+                            <div class="input-item">特殊<input type="number" class="class-input" data-class="特殊" value="0"></div>
+                        </div>
+                    </div>
+                    <div class="status-options">
+                        <label class="toggle-label"><input type="checkbox" id="owned-only-check"> 所持済みのみ抽出</label>
+                        <span class="count-display">確定合計: <span id="total-count">0</span> 人</span>
+                    </div>
+                </div>
+                <button id="generate-btn" class="main-generate-btn">作戦開始</button>
             </div>
-            <div id="squad-display" class="squad-grid"></div>
+            <div id="squad-display" class="squad-grid results-layout"></div>
         </div>
 
         <div id="manage-page" class="page">
             <h1>所持キャラ管理</h1>
-            
             <div class="manage-controls">
                 <div class="sub-tabs">
                     <button class="sub-tab-btn active" data-rarity="6">★6</button>
@@ -72,7 +81,6 @@
                     <button class="sub-tab-btn" data-rarity="4">★4</button>
                     <button class="sub-tab-btn" data-rarity="3">★3-1</button>
                 </div>
-
                 <div class="class-filter-tabs">
                     <button class="class-tab active" data-class="all">全職</button>
                     <button class="class-tab" data-class="先鋒">先鋒</button>
@@ -84,13 +92,11 @@
                     <button class="class-tab" data-class="術師">術師</button>
                     <button class="class-tab" data-class="特殊">特殊</button>
                 </div>
-
                 <div class="bulk-actions">
-                    <button id="all-owned-btn" class="action-btn">今の条件を全所持</button>
-                    <button id="all-unowned-btn" class="action-btn secondary">今の条件を全解除</button>
+                    <button id="all-owned-btn" class="action-btn">全選択</button>
+                    <button id="all-unowned-btn" class="action-btn secondary">全解除</button>
                 </div>
             </div>
-
             <div id="operator-list" class="squad-grid manage-grid"></div>
         </div>
     </div>
