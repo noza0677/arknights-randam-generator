@@ -12,6 +12,7 @@
         <nav class="main-nav">
             <button class="nav-btn active" data-target="main-page">編成生成</button>
             <button class="nav-btn" data-target="manage-page">所持キャラ管理</button>
+            <button class="nav-btn" data-target="guide-page">使い方</button>
         </nav>
 
         <div id="main-page" class="page active">
@@ -49,14 +50,11 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="status-options">
                     <button id="generate-btn" class="main-generate-btn">作戦開始</button>
                 </div>
             </div>
-
             <div id="squad-display" class="results-layout"></div>
-
             <div id="share-actions" class="share-actions" style="display: none;">
                 <button id="download-btn" class="action-btn dl">画像を保存</button>
                 <button id="share-x-btn" class="action-btn x">Xで共有</button>
@@ -91,6 +89,28 @@
                 </div>
             </div>
             <div id="operator-list" class="manage-grid"></div>
+        </div>
+
+        <div id="guide-page" class="page">
+            <h1>操作ガイド</h1>
+            <div class="guide-content">
+                <section class="guide-section">
+                    <h2>1. 所持キャラの登録</h2>
+                    <p>「所持キャラ管理」タブで、育成済みのキャラをタップして有効化してください。一括選択ボタンでレアリティごとにまとめて登録も可能です。</p>
+                </section>
+                <section class="guide-section">
+                    <h2>2. 条件を指定して生成</h2>
+                    <p>「編成生成」タブで合計人数や職種ごとの確定枠を入力し、「作戦開始」をクリック。ランダムに編成が組まれます。</p>
+                </section>
+                <section class="guide-section">
+                    <h2>3. 個別に再抽選</h2>
+                    <p>生成された編成画面で、<strong>キャラのアイコンを直接クリック</strong>すると、その枠だけを別のキャラに再抽選できます。</p>
+                </section>
+                <section class="guide-section">
+                    <h2>4. 保存と共有</h2>
+                    <p>「画像を保存」から結果を保存できます。iPhoneの方は別タブが開くので、画像を長押しして保存してください。</p>
+                </section>
+            </div>
         </div>
 
         <footer class="footer-contact">
